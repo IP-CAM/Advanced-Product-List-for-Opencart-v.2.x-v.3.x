@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Advance Product List</name>
+    <code>advance_product_list</code>
+    <version>0.1.0</version>
+    <author>Webiggle Team</author>
+    <link>https://store.webiggle.com/</link>
+	<description>Advance Product List with extra columns and quick action buttons</description>
+    
+
+    <file path="admin/view/template/catalog/product_list.tpl">
+		<!-- Add ID Column -->
+		<operation>
+			<search><![CDATA[<td class="text-center"><?php echo $column_image; ?></td>]]></search>
+			<add position="before"><![CDATA[
+				<td class="text-center">
+					<?php if ($sort == 'p.product_id') { ?>
+						<a href="<?php echo $sort_product_id; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_product_id; ?></a>
+					<?php } else { ?>
+						<a href="<?php echo $sort_product_id; ?>"><?php echo $column_product_id; ?></a>
+					<?php } ?>
+				</td>
+			]]></add>
+		</operation>
+
+		<!-- Add Date Added & Modifed Column -->
+		<operation>
+			<search><![CDATA[<td class="text-right"><?php echo $column_action; ?></td>]]></search>
+			<add position="before"><![CDATA[
+				<td class="text-left">
+					<?php if ($sort == 'p.date_added') { ?>
+						<a href="<?php echo $sort_date_added; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_date_added; ?>
+						</a>
+					<?php } else { ?>
+						<a href="<?php echo $sort_date_added; ?>"><?php echo $column_date_added; ?></a>
+					<?php } ?>
+				</td>
+				<td class="text-left">
+					<?php if ($sort == 'p.date_modified') { ?>
+						<a href="<?php echo $sort_date_modified; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_date_modified; ?></a>
+					<?php } else { ?>
+						<a href="<?php echo $sort_date_modified; ?>"><?php echo $column_date_modified; ?></a>
+					<?php } ?>
+				</td>
+			]]></add>
+		</operation>
+
+		<!-- Add Product ID Column Value -->
+		<operation>
+			<search><![CDATA[<td class="text-center"><?php if ($product['image']) { ?>]]></search>
+			<add position="before"><![CDATA[
+				<td class="text-center"><?php echo $product['product_id']; ?></td>
+			]]></add>
+		</operation>
+
+		<!-- Add Date Added & Modified Column Value -->
+		<operation>
+		<search><![CDATA[<td class="text-right"><a href="<?php echo $product['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>]]></search>
+			<add position="replace"><![CDATA[
+                  <td class="text-left"><?php echo $product['date_added']; ?></td>
+                  <td class="text-left"><?php echo $product['date_modified']; ?></td>
+                  <td class="text-right">
+                  <a href="<?php echo $product['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-default"><i class="fa fa-eye"></i></a>
+                  <a href="<?php echo $product['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                  </td>
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/controller/catalog/product.php">
+		<!-- Add Product List data for date added & modified column data -->
+		<operation>
+			<search><![CDATA[$data['products'][] = array(]]></search>
+			<add position="after"><![CDATA[
+				'date_added' => $result['date_added'],
+				'date_modified' => $result['date_modified'],
+				'view' => sprintf('/index.php?route=product/product&product_id=%s', $result['product_id']),
+	            ]]></add>
+		</operation>
+
+		<!-- Add Product List id, date added & modified column names -->
+		<operation>
+			<search><![CDATA[$data['column_action'] = $this->language->get('column_action');]]></search>
+			<add position="after"><![CDATA[
+				$data['column_product_id'] = $this->language->get('column_product_id');
+				$data['column_date_added'] = $this->language->get('column_date_added');
+				$data['column_date_modified'] = $this->language->get('column_date_modified');
+	            ]]></add>
+		</operation>
+
+		<!-- Add Product View button -->
+		<operation>
+			<search><![CDATA[$data['button_edit'] = $this->language->get('button_edit');]]></search>
+			<add position="after"><![CDATA[
+				$data['button_view'] = $this->language->get('button_view');
+	            ]]></add>
+		</operation>
+
+		<!-- Add sorting links -->
+		<operation>
+			<search><![CDATA[$data['sort_name'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=pd.name' . $url, true);]]></search>
+			<add position="before"><![CDATA[
+				$data['sort_date_added'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=p.date_added' . $url, true);
+				$data['sort_date_modified'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=p.date_modified' . $url, true);
+				$data['sort_product_id'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=p.product_id' . $url, true);
+	            ]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/model/catalog/product.php">
+		<!-- Add sorting for all sortable columns -->
+		<operation>
+			<search><![CDATA[$sort_data = array(]]></search>
+			<add position="after"><![CDATA[
+				'p.product_id',
+				'p.date_added',
+				'p.date_modified',
+	            ]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/**/catalog/product.php">
+		<operation>
+		    <search><![CDATA[ $_['column_action'] ]]></search>
+		    <add position="before"><![CDATA[
+                $_['column_product_id']      = 'ID';
+				$_['column_date_added']      = 'Date Added';
+				$_['column_date_modified']   = 'Date Modified';
+		    ]]></add>
+		</operation>
+	</file>
+</modification>
