@@ -2,7 +2,7 @@
 <modification>
     <name>Advance Product List - Columns, Filters &amp; Actions</name>
     <code>advance_product_list</code>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <author>Webiggle Team</author>
     <link>https://store.webiggle.com/</link>
 	<description>Advance Product List with extra columns and quick action buttons</description>
@@ -68,6 +68,43 @@
 			<add position="replace"><![CDATA[
 				<td class="text-right"><a href="{{ product.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-default"><i class="fa fa-eye"></i></a>
 				<a href="{{ product.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+			]]></add>
+		</operation>
+
+		<!-- Expand Products List -->
+		<operation>	
+			<search><![CDATA[<div class="col-md-9 col-md-pull-3 col-sm-12">]]></search>
+			<add position="replace"><![CDATA[
+				<div class="col-md-9 col-md-pull-3 col-sm-12 table-row">
+			]]></add>
+		</operation>
+
+		<operation>	
+			<search><![CDATA[<h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>]]></search>
+			<add position="after"><![CDATA[
+			<div class="pull-right">
+              <div class="hidden-sm" style="cursor:pointer" data-toggle="tooltip" title="Expand Table" id="table-toggle"><i class="fa fa-expand"></i></div>
+            </div>
+			]]></add>
+		</operation>
+		
+		<operation>	
+			<search><![CDATA[$('#button-filter').on('click', function() {]]></search>
+			<add position="before"><![CDATA[
+				$('#table-toggle').on('click', function(){
+				var table = $(this).closest('.table-row');
+				var filter = $('#filter-product');
+
+				if(table.hasClass('expanded')){
+					table.removeClass('expanded')
+					table.addClass('col-md-pull-3 col-md-9')
+					filter.removeClass('hidden');
+					return;
+				}
+					table.addClass('expanded')
+					table.removeClass('col-md-pull-3 col-md-9')
+					filter.addClass('hidden');
+				});
 			]]></add>
 		</operation>
 	</file>
