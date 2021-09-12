@@ -11,7 +11,7 @@
 1. Go to > Catalog > Product
 2. Start Using New Columnd & Quick buttons
 
-#### !! Installed Complete !!
+#### !!  Installed Complete  !!
 
 For Support & Customizations
 Email us at: info@webiggle.com
